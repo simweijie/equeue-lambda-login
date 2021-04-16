@@ -26,27 +26,33 @@ logger.info("SUCCESS: Connection to RDS MySQL instance succeeded")
 def handler(event, context):
     cur = connection.cursor()  
 ## Retrieve Data
-    query = "SELECT * FROM Clinic"    
+    query = "SELECT * FROM Customer where email='{}' and password='{}'".format(event['email'],event['password'])    
     cur.execute(query)
     connection.commit()
 ## Construct body of the response object
     
-    clinicList = []
+    output = []
     rows = cur.fetchall()
     for row in rows:
-        print("TEST {0} {1}".format(row[0],row[1]))
+        print("TEST {0} {1} {2} {3} {4} {5} {6} {7}".format(row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7]))
         transactionResponse = {}
         transactionResponse['id'] = row[0]
-        transactionResponse['name'] = row[1]
-        clinicList.append(transactionResponse)
+        transactionResponse['email'] = row[1]
+        # transactionResponse['password'] = row[2]
+        transactionResponse['uin'] = row[3]
+        transactionResponse['name'] = row[4]
+        transactionResponse['addr'] = row[5]
+        transactionResponse['postal'] = row[6]
+        transactionResponse['contactNo'] = row[7]
+        output.append(transactionResponse)
 
 # Construct http response object
     responseObject = {}
-    #responseObject['statusCode'] = 200
-    #responseObject['headers'] = {}
-    #responseObject['headers']['Content-Type']='application/json'
-    #responseObject['headers']['Access-Control-Allow-Origin']='*'
-    responseObject['data']= clinicList
+    # responseObject['statusCode'] = 200
+    # responseObject['headers'] = {}
+    # responseObject['headers']['Content-Type']='application/json'
+    # responseObject['headers']['Access-Control-Allow-Origin']='*'
+    responseObject['data']= output
     # responseObject['body'] = json.dumps(transactionResponse, sort_keys=True,default=str)
     
     #k = json.loads(responseObject['body'])
